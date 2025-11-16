@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify, render_template
-from datetime import datetime
+from datetime import datetime, timedelta
 import sqlite3
 
 app = Flask(__name__)
@@ -27,7 +27,6 @@ def receber_temperatura():
     valor = float(data.get("temperatura"))
 
     # Ajuste de fuso horário para Brasil (UTC-3)
-    from datetime import datetime, timedelta
     FUSO_BR = timedelta(hours=-3)
     horario_br = datetime.utcnow() + FUSO_BR
 
