@@ -26,14 +26,22 @@ def receber_temperatura():
     data = request.get_json()
     valor = float(data.get("temperatura"))
 
+    # Ajuste de fuso horário para Brasil (UTC-3)
+    from datetime import datetime, timedelta
+    FUSO_BR = timedelta(hours=-3)
+    horario_br = datetime.utcnow() + FUSO_BR
+
+    # Formato desejado: (YYYY-MM-DD) HH:MM:SS
+    data_formatada = horario_br.strftime("(%Y-%m-%d) %H:%M:%S")
+
     conn = sqlite3.connect("temperaturas.db")
     c = conn.cursor()
     c.execute("INSERT INTO temperatura (valor, data_hora) VALUES (?, ?)",
-              (valor, datetime.now().isoformat()))
+              (valor, data_formatada))
     conn.commit()
     conn.close()
 
-    print(f"Temperatura recebida: {valor}°C")
+    print(f"Temperatura recebida: {valor}°C às {data_formatada}")
     return jsonify({"status": "ok"}), 200
 
 @app.route("/historico")
