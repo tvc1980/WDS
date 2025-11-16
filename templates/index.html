@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>WDS • Temperatura</title>
+  <script src="/static/chart.js"></script>
+
+  <style>
+    body { font-family: Arial; padding: 20px; background: #f3f3f3; }
+    h1 { text-align: center; }
+    .card {
+      max-width: 800px;
+      margin: auto;
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+    }
+  </style>
+</head>
+
+<body>
+  <h1>WDS • Temperatura em tempo real</h1>
+
+  <div class="card">
+    <canvas id="grafico"></canvas>
+  </div>
+
+  <script>
+    const ctx = document.getElementById('grafico').getContext('2d');
+    const chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: [],
+            datasets: [{
+                label: "Temperatura (°C)",
+                data: [],
+                borderWidth: 2
+            }]
+        },
+        options: { responsive: true }
+    });
+
+    async function atualizar() {
+        const resp = await fetch("/historico");
+        const dados = await resp.json();
+
+        chart.data.labels = dados.tempo;
+        chart.data.datasets[0].data = dados.temperatura;
+        chart.update();
+    }
+
+    setInterval(atualizar, 3000);
+    atualizar();
+  </script>
+</body>
+</html>
